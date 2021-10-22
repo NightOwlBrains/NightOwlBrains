@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "565107557581",
+    "project_id": "catch-the-monkey-ad201",
+    "storage_bucket": "catch-the-monkey-ad201.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:565107557581:android:7a727dbbc97cc681649584",
+        "android_client_info": {
+          "package_name": "com.night_owl_brains.catch_the_monkey"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "565107557581-e9p5tph61elee65goe26a8enjgojgh3c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzacWIIaiy-T2CsF5FQPIbARFXFPkLEfM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "565107557581-e9p5tph61elee65goe26a8enjgojgh3c.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "565107557581-4om45nqjc5t5cmpvfvgsj3qg2vrlb4df.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.nightowlbrains.catchthemonkey",
+                "app_store_id": "1588028531"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
