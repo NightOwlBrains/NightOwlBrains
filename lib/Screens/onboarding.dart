@@ -4,6 +4,7 @@ import 'package:catch_the_monkey/Utils/constants.dart';
 import 'package:catch_the_monkey/Utils/images.dart';
 import 'package:catch_the_monkey/Widgets/background_container.dart';
 import 'package:catch_the_monkey/Widgets/buttons.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/material.dart';
 
@@ -12,7 +13,51 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'welcome.dart';
 
-class Onboarding extends StatelessWidget {
+class Onboarding extends StatefulWidget {
+  @override
+  State<Onboarding> createState() => _OnboardingState();
+}
+
+class _OnboardingState extends State<Onboarding> {
+  late FirebaseMessaging messaging;
+  String? notificationText;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    messaging = FirebaseMessaging.instance;
+    messaging.subscribeToTopic("messaging");
+    messaging.getToken().then((value) {
+      print(value);
+    });
+    FirebaseMessaging.onMessage.listen((RemoteMessage event) {
+      print("message recieved");
+      print(event.notification!.title);
+
+      print(event.notification!.body);
+      print(event.data.values);
+      // showDialog(
+      //     context: context,
+      //     builder: (BuildContext context) {
+      //       return AlertDialog(
+      //         title: Text(event.notification!.title!),
+      //         content: Text(event.notification!.body!),
+      //         actions: [
+      //           TextButton(
+      //             child: Text("Ok"),
+      //             onPressed: () {
+      //               Navigator.of(context).pop();
+      //             },
+      //           )
+      //         ],
+      //       );
+      //     });
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      print('Message clicked!');
+    });
+  }
+
   final List<PageViewModel> _introImagesList = [
     PageViewModel(
       title: K_Empty_String,
@@ -26,7 +71,8 @@ class Onboarding extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(top: 60.h, left: 24.w, right: 24.w),
             child: Text(K_Intro_Texts[0],
-                textAlign: TextAlign.center, style: TextStyle(color: AppColors.white)),
+                textAlign: TextAlign.center,
+                style: TextStyle(color: AppColors.white)),
           ),
         ],
       ),
@@ -43,7 +89,8 @@ class Onboarding extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(top: 60.h, left: 24.w, right: 24.w),
             child: Text(K_Intro_Texts[1],
-                textAlign: TextAlign.center, style: TextStyle(color: AppColors.white)),
+                textAlign: TextAlign.center,
+                style: TextStyle(color: AppColors.white)),
           ),
         ],
       ),
@@ -60,7 +107,8 @@ class Onboarding extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(top: 60.h, left: 24.w, right: 24.w),
             child: Text(K_Intro_Texts[2],
-                textAlign: TextAlign.center, style: TextStyle(color: AppColors.white)),
+                textAlign: TextAlign.center,
+                style: TextStyle(color: AppColors.white)),
           ),
         ],
       ),

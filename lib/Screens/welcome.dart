@@ -6,9 +6,11 @@ import 'package:catch_the_monkey/Widgets/background_container.dart';
 import 'package:catch_the_monkey/Widgets/buttons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
+import 'package:in_app_review/in_app_review.dart';
+import 'package:rating_dialog/rating_dialog.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:store_redirect/store_redirect.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import 'game.dart';
 
 class Welcome extends StatefulWidget {
@@ -20,12 +22,49 @@ class Welcome extends StatefulWidget {
 
 class _WelcomeState extends State<Welcome> {
   BuildContext? _context;
+  final InAppReview inAppReview = InAppReview.instance;
+
   @override
   void initState() {
-    if (widget.isFirst) {
-      WidgetsBinding.instance!.addPostFrameCallback((_) => _showAlertDialog());
+    // if (widget.isFirst) {
+    //   WidgetsBinding.instance!.addPostFrameCallback((_) => _showAlertDialog());
+    // }
+    if (videoslengthplay == 1) {
+      _showRatingAppDialog();
     }
+
     super.initState();
+  }
+
+  _showRatingAppDialog() async {
+    await Future.delayed(Duration(milliseconds: 100));
+    final _ratingDialog = RatingDialog(
+      title: Text("Catch The Monkey"),
+      image: Image.asset(
+        "assets/images/monkey.png",
+        height: 100,
+      ),
+      submitButtonText: "Submit",
+      onCancelled: () => print('cancelled'),
+      onSubmitted: (response) {
+        print('rating: ${response.rating}, '
+            'comment: ${response.comment}');
+
+        if (response.rating < 3.0) {
+          print('response.rating: ${response.rating}');
+        } else {
+          StoreRedirect.redirect(
+              androidAppId: 'com.night_owl_brains.catch_the_monkey',
+              iOSAppId: 'com.nightowlbrains.catchthemonkey');
+        }
+      },
+    );
+
+    return showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => _ratingDialog,
+    );
   }
 
   @override

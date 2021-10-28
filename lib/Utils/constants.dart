@@ -1,5 +1,6 @@
 import 'dart:io';
 
+int videoslengthplay = 0;
 const K_App_Name = "Catch the monkey";
 const K_Empty_String = "";
 const K_Play_Game = "Play Game";

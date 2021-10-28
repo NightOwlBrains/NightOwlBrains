@@ -2,10 +2,13 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:catch_the_monkey/Services/music_service.dart';
+import 'package:catch_the_monkey/Utils/app_colors.dart';
 import 'package:catch_the_monkey/Utils/assets.dart';
+import 'package:catch_the_monkey/Utils/constants.dart';
 import 'package:catch_the_monkey/Utils/images.dart';
 import 'package:catch_the_monkey/Widgets/background_container.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:page_transition/page_transition.dart';
 import 'package:video_player/video_player.dart';
@@ -29,9 +32,24 @@ class _GameState extends State<Game> with TickerProviderStateMixin {
   VideoPlayerController? _videoPlayerController;
   int _milliSeconds = 0;
   int counter = 0;
+  bool movingState = true;
   @override
   void initState() {
     super.initState();
+    Future.delayed(Duration(milliseconds: 500), () {
+      return showDialog(
+          barrierColor: Colors.transparent,
+          context: context,
+          builder: (BuildContext context) {
+            Future.delayed(Duration(seconds: 4), () {
+              Navigator.of(context).pop(true);
+            });
+            return AlertDialog(
+              backgroundColor: Colors.transparent,
+              actions: [Image.asset("assets/images/monkeygif.gif")],
+            );
+          });
+    });
     _setTimer();
     _sizeTimer();
     _initiateVideo();
@@ -39,12 +57,7 @@ class _GameState extends State<Game> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BackgroundContainer(
-        child: _body(),
-        image: Images.background4,
-      ),
-    );
+    return Scaffold(body: _body());
   }
 
   @override
@@ -78,55 +91,73 @@ class _GameState extends State<Game> with TickerProviderStateMixin {
   }
 
   _body() {
-    return Stack(
-      children: [
-        GestureDetector(
-          onPanStart: (_) {
-            // counter++;
-            // MusicService().stopAllAudio();
-            // MusicService().playGameOverMusic();
-            // Navigator.push(
-            //   context,
-            //   PageTransition(
-            //     type: PageTransitionType.bottomToTop,
-            //     duration: Duration(milliseconds: 1),
-            //     child: GameOver(),
-            //   ),
-            // ).then((value) {
-            //   MusicService().stopAllAudio();
-            //   MusicService().playMonkeyMusic();
-            //   _setTimer();
-            // });
-          },
-          child: Container(
-            height: double.infinity,
-            width: double.infinity,
-            color: Colors.transparent,
-          ),
-        ),
-        AnimatedPositioned(
-          top: _top,
-          left: _bottom,
-          duration: Duration(milliseconds: 170 + (counter * 10)),
-          child: InkWell(
-            onTap: () {
-              MusicService().stopAllAudio();
-              Navigator.push(
-                  context,
-                  PageTransition(
-                      type: PageTransitionType.fade,
-                      duration: const Duration(microseconds: 0),
-                      child: Horror(_videoPlayerController!, _milliSeconds)));
+    return BackgroundContainer(
+      image: Images.background4,
+      child: Stack(
+        children: [
+          GestureDetector(
+            onPanStart: (_) {
+              // counter++;
+              // MusicService().stopAllAudio();
+              // MusicService().playGameOverMusic();
+              // Navigator.push(
+              //   context,
+              //   PageTransition(
+              //     type: PageTransitionType.bottomToTop,
+              //     duration: Duration(milliseconds: 1),
+              //     child: GameOver(),
+              //   ),
+              // ).then((value) {
+              //   MusicService().stopAllAudio();
+              //   MusicService().playMonkeyMusic();
+              //   _setTimer();
+              // });
             },
-            child: Image.asset(
-              Images.monkey,
-              height: height,
-              width: width,
-              fit: BoxFit.fill,
+            child: Container(
+              height: double.infinity,
+              width: double.infinity,
+              color: Colors.transparent,
             ),
           ),
-        ),
-      ],
+          if (movingState) ...[
+            AnimatedPositioned(
+              top: _top,
+              left: _bottom,
+              duration: Duration(milliseconds: 170 + (counter * 10)),
+              child: InkWell(
+                onTap: () {
+                  MusicService().stopAllAudio();
+                  setState(() {
+                    movingState = false;
+                  });
+                  // Navigator.pushAndRemoveUntil(
+                  //     context,
+                  //     PageTransition(
+                  //         type: PageTransitionType.fade,
+                  //         duration: const Duration(microseconds: 0),
+                  //         child: Horror(_videoPlayerController!, _milliSeconds)),
+                  //     (route) => false);
+                  Navigator.push(
+                      context,
+                      PageTransition(
+                          type: PageTransitionType.fade,
+                          duration: const Duration(microseconds: 0),
+                          child: Horror(_videoPlayerController!, _milliSeconds,
+                              context)));
+                },
+                child: Image.asset(
+                  Images.monkey,
+                  height: height,
+                  width: width,
+                  fit: BoxFit.fill,
+                ),
+              ),
+            ),
+          ] else ...[
+            Container(),
+          ],
+        ],
+      ),
     );
   }
 
@@ -155,7 +186,7 @@ class _GameState extends State<Game> with TickerProviderStateMixin {
 
     String video = Assets.horrorVideos[videoNumber];
     videoNumber++;
-
+    videoslengthplay = videoNumber;
     _videoPlayerController = VideoPlayerController.asset(video);
     _videoPlayerController?.setPlaybackSpeed(2);
   }

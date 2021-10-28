@@ -2,6 +2,8 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:catch_the_monkey/Services/music_service.dart';
 import 'package:catch_the_monkey/Utils/constants.dart';
 import 'package:catch_the_monkey/splash_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,11 +18,17 @@ import 'Screens/onboarding.dart';
 late final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 late final AudioCache musicCache;
 late final AudioPlayer instance;
+Future<void> _messageHandler(RemoteMessage message) async {
+  print('background message ${message.notification!.body}');
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   await setLocalNotification();
+  FirebaseMessaging.onBackgroundMessage(_messageHandler);
   await MobileAds.instance.initialize();
   MusicService().stopAllAudio();
   MusicService().playMonkeyMusic();
@@ -53,7 +61,6 @@ Future<void> scheduleNotification() async {
   var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
     'channel id',
     'channel name',
-    'channel description',
     icon: '@drawable/icon',
     largeIcon: DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
   );

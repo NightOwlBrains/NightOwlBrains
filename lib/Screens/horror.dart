@@ -17,31 +17,37 @@ import 'welcome.dart';
 class Horror extends StatefulWidget {
   VideoPlayerController _videoPlayerController;
   int _milliseconds;
-  Horror(this._videoPlayerController, this._milliseconds);
+  final BuildContext gameContext;
+  Horror(this._videoPlayerController, this._milliseconds, this.gameContext);
   @override
   State<Horror> createState() => _HorrorState();
 }
 
 class _HorrorState extends State<Horror> {
-  // InterstitialAd? _interstitialAd;
+  InterstitialAd? _interstitialAd;
   bool _isShown = false;
+  bool isAddLoaded = false;
+  BuildContext? _buildContext;
+
   @override
   void initState() {
-    // InterstitialAd.load(
-    //     adUnitId: _adUnitID(),
-    //     request: const AdRequest(),
-    //     adLoadCallback: InterstitialAdLoadCallback(
-    //       onAdLoaded: (InterstitialAd ad) {
-    //         _interstitialAd = ad;
-    //         _interstitialAd?.fullScreenContentCallback =
-    //             FullScreenContentCallback(onAdDismissedFullScreenContent: (ad) {
-    //           _navigateToWelcomeScreen();
-    //         });
-    //       },
-    //       onAdFailedToLoad: (LoadAdError error) {
-    //         print('InterstitialAd failed to load: $error');
-    //       },
-    //     ));
+    InterstitialAd.load(
+        adUnitId: _adUnitID(),
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (InterstitialAd ad) {
+            _interstitialAd = ad;
+            isAddLoaded = true;
+            _interstitialAd?.fullScreenContentCallback =
+                FullScreenContentCallback(onAdDismissedFullScreenContent: (ad) {
+              print('Add Closed dasdasda');
+              _navigateToGameOverScreen();
+            });
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            print('InterstitialAd failed to load: $error');
+          },
+        ));
     _intializeVideo();
     super.initState();
   }
@@ -79,7 +85,7 @@ class _HorrorState extends State<Horror> {
 
   void _intializeVideo() {
     widget._videoPlayerController.setPlaybackSpeed(2);
-    widget._videoPlayerController.addListener(() {
+    widget._videoPlayerController.addListener(() async {
       Vibration.vibrate();
       if (!widget._videoPlayerController.value.isPlaying &&
           widget._videoPlayerController.value.isInitialized &&
@@ -89,7 +95,12 @@ class _HorrorState extends State<Horror> {
           _isShown = true;
           // _showAlertDialog();
           AppRouter.pop(context);
-          AppRouter.push(context, const GameOver());
+          if (_interstitialAd == null) {
+            _navigateToGameOverScreen();
+          }
+          {
+            _interstitialAd!.show();
+          }
         }
       }
     });
@@ -97,10 +108,19 @@ class _HorrorState extends State<Horror> {
     widget._videoPlayerController.play();
   }
 
+  _navigateToGameOverScreen() async {
+    Vibration.cancel();
+    MusicService().stopAllAudio();
+    await MusicService().playMonkeyMusic();
+    AppRouter.push(widget.gameContext, GameOver());
+  }
+
   String _adUnitID() {
     print("hhhhhhhhh");
     print(Platform.isIOS);
     if (Platform.isAndroid) {
+      //testing id
+      // return 'ca-app-pub-3940256099942544/1033173712';
       return "ca-app-pub-8167936072500546/2294696788";
     } else if (Platform.isIOS) {
       return "ca-app-pub-8167936072500546/1353150209";
@@ -112,12 +132,12 @@ class _HorrorState extends State<Horror> {
     // return "ca-app-pub-8167936072500546/1353150209";
   }
 
-  _navigateToWelcomeScreen() async {
-    Vibration.cancel();
-    MusicService().stopAllAudio();
-    await MusicService().playMonkeyMusic();
-    AppRouter.makeFirst(context, Welcome());
-  }
+  // _navigateToWelcomeScreen() async {
+  //   Vibration.cancel();
+  //   MusicService().stopAllAudio();
+  //   await MusicService().playMonkeyMusic();
+  //   AppRouter.makeFirst(context, Welcome());
+  // }
 
   _showAlertDialog() async {
     var dialog = AlertDialog(

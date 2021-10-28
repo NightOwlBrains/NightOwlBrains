@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:catch_the_monkey/Screens/welcome.dart';
 import 'package:catch_the_monkey/Services/music_service.dart';
 import 'package:catch_the_monkey/Utils/app_colors.dart';
@@ -9,12 +8,9 @@ import 'package:catch_the_monkey/Utils/images.dart';
 import 'package:catch_the_monkey/Widgets/background_container.dart';
 import 'package:catch_the_monkey/Widgets/buttons.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vibration/vibration.dart';
-import 'package:video_player/video_player.dart';
 
 class GameOver extends StatefulWidget {
   const GameOver({Key? key}) : super(key: key);
@@ -25,13 +21,13 @@ class GameOver extends StatefulWidget {
 
 class _GameOverState extends State<GameOver> {
   BuildContext? _buildContext;
-  InterstitialAd? _interstitialAd;
-  bool isAddLoaded = false;
+  // InterstitialAd? _interstitialAd;
+  // bool isAddLoaded = false;
 
-  String _adUnitID() {
-    if (Platform.isAndroid) return "ca-app-pub-8167936072500546/2294696788";
-    return "ca-app-pub-8167936072500546/1353150209";
-  }
+  // String _adUnitID() {
+  //   if (Platform.isAndroid) return "ca-app-pub-8167936072500546/2294696788";
+  //   return "ca-app-pub-8167936072500546/1353150209";
+  // }
 
   _navigateToWelcomeScreen() async {
     AppRouter.pop(_buildContext!);
@@ -47,24 +43,24 @@ class _GameOverState extends State<GameOver> {
 
   @override
   void initState() {
-    InterstitialAd.load(
-        adUnitId: _adUnitID(),
-        request: const AdRequest(),
-        adLoadCallback: InterstitialAdLoadCallback(
-          onAdLoaded: (InterstitialAd ad) {
-            _interstitialAd = ad;
-            setState(() => isAddLoaded = true);
-            _interstitialAd?.fullScreenContentCallback =
-                FullScreenContentCallback(onAdDismissedFullScreenContent: (ad) {
-              _navigateToWelcomeScreen();
-              _interstitialAd = null;
-            });
-          },
-          onAdFailedToLoad: (LoadAdError error) {
-            // ignore: avoid_print
-            print('InterstitialAd failed to load: $error');
-          },
-        ));
+    // InterstitialAd.load(
+    //     adUnitId: _adUnitID(),
+    //     request: const AdRequest(),
+    //     adLoadCallback: InterstitialAdLoadCallback(
+    //       onAdLoaded: (InterstitialAd ad) {
+    //         _interstitialAd = ad;
+    //         setState(() => isAddLoaded = true);
+    //         _interstitialAd?.fullScreenContentCallback =
+    //             FullScreenContentCallback(onAdDismissedFullScreenContent: (ad) {
+    //           _navigateToWelcomeScreen();
+    //           _interstitialAd = null;
+    //         });
+    //       },
+    //       onAdFailedToLoad: (LoadAdError error) {
+    //         // ignore: avoid_print
+    //         print('InterstitialAd failed to load: $error');
+    //       },
+    //     ));
     super.initState();
   }
 
@@ -77,12 +73,14 @@ class _GameOverState extends State<GameOver> {
       },
       child: Scaffold(
         body: BackgroundContainer(
-          child: isAddLoaded
-              ? _body()
-              : const Center(
-                  child: CircularProgressIndicator(
-                  color: Colors.red,
-                )),
+          child:
+              // isAddLoaded
+              // ?
+              _body(),
+          // : const Center(
+          //     child: CircularProgressIndicator(
+          //     color: Colors.red,
+          //   )),
           image: Images.background5,
         ),
       ),
@@ -130,11 +128,12 @@ class _GameOverState extends State<GameOver> {
           children: [
             Button(K_Prank_Again, () {
               // AppRouter.pop(_buildContext);
-              if (_interstitialAd == null) {
-                _navigateToWelcomeScreen();
-              } else {
-                _interstitialAd?.show();
-              }
+              // if (_interstitialAd == null) {
+
+              _navigateToWelcomeScreen();
+              // } else {
+              //   _interstitialAd?.show();
+              // }
             }),
             // SizedBox(height: 14.h),
             // Button(K_Rate_Us, _ratePressed,

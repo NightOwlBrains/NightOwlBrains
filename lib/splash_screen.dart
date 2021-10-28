@@ -1,5 +1,6 @@
 // ignore: file_names
 import 'package:catch_the_monkey/Screens/onboarding.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -10,6 +11,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  
   @override
   void initState() {
     // TODO: implement initState
@@ -23,6 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
         (route) => false,
       );
     });
+    
   }
 
   @override
